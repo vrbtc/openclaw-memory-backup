@@ -1,0 +1,83 @@
+{
+  "last_run": {
+    "run_id": "run_1774110397684",
+    "created_at": "2026-03-21T16:26:37.838Z",
+    "parent_event_id": null,
+    "selected_gene_id": "gene_gep_repair_from_errors",
+    "selected_capsule_id": null,
+    "selector": {
+      "selected": "gene_gep_repair_from_errors",
+      "reason": [
+        "signals match gene.signals_match",
+        "signals: log_error, user_feature_request, user_feature_request:- 备份完成，现在追加模型使用策略。",
+        "memory_graph: memory_prefer:gene_gep_repair_from_errors | gene_prior:0.250",
+        "drift_intensity: 0.707"
+      ],
+      "alternatives": []
+    },
+    "signals": [
+      "log_error",
+      "user_feature_request",
+      "user_feature_request:- 备份完成，现在追加模型使用策略。"
+    ],
+    "mutation": {
+      "type": "Mutation",
+      "id": "mut_1774110397680",
+      "category": "repair",
+      "trigger_signals": [
+        "log_error",
+        "user_feature_request",
+        "user_feature_request:- 备份完成，现在追加模型使用策略。"
+      ],
+      "target": "gene:gene_gep_repair_from_errors",
+      "expected_effect": "reduce runtime errors, increase stability, and lower failure rate",
+      "risk_level": "low"
+    },
+    "mutation_id": "mut_1774110397680",
+    "personality_state": {
+      "type": "PersonalityState",
+      "rigor": 0.7,
+      "creativity": 0.35,
+      "verbosity": 0.25,
+      "risk_tolerance": 0.4,
+      "obedience": 0.85
+    },
+    "personality_key": "rigor=0.7|creativity=0.3|verbosity=0.3|risk_tolerance=0.4|obedience=0.9",
+    "personality_known": false,
+    "personality_mutations": [],
+    "drift": false,
+    "selected_by": "memory_graph+selector",
+    "source_type": "generated",
+    "reused_asset_id": null,
+    "reused_source_node": null,
+    "reused_chain_id": null,
+    "baseline_untracked": [],
+    "baseline_git_head": "92ca3003d00c6ae2658d6e42602b49665ce236fb",
+    "blast_radius_estimate": {
+      "files": 12,
+      "lines": 960
+    },
+    "strategy_policy": {
+      "name": "early-stabilize",
+      "label": "Early Stabilization",
+      "description": "First cycles. Prioritize fixing existing issues before innovating.",
+      "forceInnovate": false,
+      "cautiousExecution": false,
+      "highRiskGene": false,
+      "repairStreak": 0,
+      "failureStreak": 0,
+      "blastRadiusMaxFiles": 12,
+      "directives": [
+        "Base strategy: Early Stabilization (First cycles. Prioritize fixing existing issues before innovating.)",
+        "Target max files for this cycle: 12."
+      ]
+    },
+    "active_task_id": null,
+    "active_task_title": null,
+    "worker_assignment_id": null,
+    "worker_pending": false,
+    "commitment_deadline": null,
+    "applied_lessons": [],
+    "hub_lessons": []
+  }
+}

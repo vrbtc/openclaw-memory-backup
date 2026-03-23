@@ -1,0 +1,125 @@
+{
+  "date": "2026-03-20",
+  "timestamp": "2026-03-20T06:51:49.986Z",
+  "reflection": {
+    "question_1": {
+      "title": "任务执行健康度",
+      "tasks_completed": 8,
+      "tasks_failed": 15,
+      "success_rate": "35%",
+      "trend": "stable",
+      "details": [
+        {
+          "task": "Unknown",
+          "status": 2,
+          "time": "2026-03-19T15:21:41.414258"
+        },
+        {
+          "task": "Unknown",
+          "status": 2,
+          "time": "2026-03-19T16:21:41.445534"
+        },
+        {
+          "task": "Unknown",
+          "status": 2,
+          "time": "2026-03-19T17:21:41.398070"
+        },
+        {
+          "task": "Unknown",
+          "status": 2,
+          "time": "2026-03-19T18:21:41.395948"
+        },
+        {
+          "task": "Unknown",
+          "status": 1,
+          "time": "2026-03-19T19:21:41.407917"
+        },
+        {
+          "task": "Unknown",
+          "status": 0,
+          "time": "2026-03-19T20:21:41.500344"
+        },
+        {
+          "task": "Unknown",
+          "status": 0,
+          "time": "2026-03-19T21:21:41.508582"
+        },
+        {
+          "task": "Unknown",
+          "status": 0,
+          "time": "2026-03-19T22:21:41.500708"
+        },
+        {
+          "task": "Unknown",
+          "status": 0,
+          "time": "2026-03-19T23:21:41.506290"
+        },
+        {
+          "task": "Unknown",
+          "status": 5,
+          "time": "2026-03-20T08:21:41.547125"
+        },
+        {
+          "task": "Unknown",
+          "status": 5,
+          "time": "2026-03-20T09:21:41.537402"
+        },
+        {
+          "task": "Unknown",
+          "status": 3,
+          "time": "2026-03-20T10:21:41.578790"
+        },
+        {
+          "task": "Unknown",
+          "status": 2,
+          "time": "2026-03-20T11:21:41.609008"
+        },
+        {
+          "task": "Unknown",
+          "status": 2,
+          "time": "2026-03-20T12:21:41.620194"
+        },
+        {
+          "task": "Unknown",
+          "status": 2,
+          "time": "2026-03-20T13:21:41.694900"
+        }
+      ]
+    },
+    "question_2": {
+      "title": "错误与学习",
+      "new_errors": 1,
+      "recurring_errors": 0,
+      "learnings": [],
+      "error_details": [
+        {
+          "file": "commander-errors-20260312.md",
+          "title": "总指挥错误记录 - 2026-03-12"
+        }
+      ]
+    },
+    "question_3": {
+      "title": "改进机会",
+      "optimizations": [
+        "任务执行成功率低于80%，建议检查失败原因",
+        "定期清理过期的日志文件"
+      ],
+      "skills_to_learn": [
+        "建议每天记录至少一条学习心得"
+      ],
+      "next_actions": [
+        "审查失败任务的日志",
+        "运行系统健康检查"
+      ]
+    }
+  },
+  "score": {
+    "overall": 52,
+    "level": "Basic",
+    "dimensions": {
+      "execution": 35,
+      "learning": 50,
+      "improvement": 70
+    }
+  }
+}

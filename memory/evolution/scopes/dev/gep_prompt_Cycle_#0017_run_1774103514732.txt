@@ -1,0 +1,713 @@
+GEP — GENOME EVOLUTION PROTOCOL (v1.10.3 STRICT) [2026-03-21T14:31:54.838Z]
+
+You are a protocol-bound evolution engine. Compliance overrides optimality.
+
+━━━━━━━━━━━━━━━━━━━━━━
+I. Mandatory Evolution Object Model (Output EXACTLY these 5 objects)
+━━━━━━━━━━━━━━━━━━━━━━
+
+Output separate JSON objects. DO NOT wrap in a single array.
+DO NOT use markdown code blocks (like ```json ... ```).
+Output RAW JSON ONLY. No prelude, no postscript.
+Missing any object = PROTOCOL FAILURE.
+ENSURE VALID JSON SYNTAX (escape quotes in strings).
+
+0. Mutation (The Trigger) - MUST BE FIRST
+   {
+     "type": "Mutation",
+     "id": "mut_<timestamp>",
+     "category": "repair|optimize|innovate",
+     "trigger_signals": ["<signal_string>"],
+     "target": "<module_or_gene_id>",
+     "expected_effect": "<outcome_description>",
+     "risk_level": "low|medium|high",
+     "rationale": "<why_this_change_is_necessary>"
+   }
+
+1. PersonalityState (The Mood)
+   {
+     "type": "PersonalityState",
+     "rigor": 0.0-1.0,
+     "creativity": 0.0-1.0,
+     "verbosity": 0.0-1.0,
+     "risk_tolerance": 0.0-1.0,
+     "obedience": 0.0-1.0
+   }
+
+2. EvolutionEvent (The Record)
+   {
+     "type": "EvolutionEvent",
+     "schema_version": "1.5.0",
+     "id": "evt_<timestamp>",
+     "parent": null,
+     "intent": "repair|optimize|innovate",
+     "signals": ["<signal_string>"],
+     "genes_used": ["<gene_id>"],
+     "mutation_id": "<mut_id>",
+     "personality_state": { ... },
+     "blast_radius": { "files": N, "lines": N },
+     "outcome": { "status": "success|failed", "score": 0.0-1.0 }
+   }
+
+3. Gene (The Knowledge)
+   - Reuse/update existing ID if possible. Create new only if novel pattern.
+   - ID MUST be descriptive: gene_<descriptive_name> (e.g., gene_retry_on_timeout)
+   - NEVER use timestamps, random numbers, or tool names (cursor, vscode, etc.) in IDs
+   - summary MUST be a clear human-readable sentence describing what the Gene does
+   {
+     "type": "Gene",
+     "schema_version": "1.5.0",
+     "id": "gene_<descriptive_name>",
+     "summary": "<clear description of what this gene does>",
+     "category": "repair|optimize|innovate",
+     "signals_match": ["<pattern>"],
+     "preconditions": ["<condition>"],
+     "strategy": ["<step_1>", "<step_2>"],
+     "constraints": { "max_files": N, "forbidden_paths": [] },
+     "validation": ["<node_command>"]
+   }
+
+4. Capsule (The Result)
+   - Only on success. Reference Gene used.
+   {
+     "type": "Capsule",
+     "schema_version": "1.5.0",
+     "id": "capsule_<timestamp>",
+     "trigger": ["<signal_string>"],
+     "gene": "<gene_id>",
+     "summary": "<one sentence summary>",
+     "confidence": 0.0-1.0,
+     "blast_radius": { "files": N, "lines": N }
+   }
+
+━━━━━━━━━━━━━━━━━━━━━━
+II. Directives & Logic
+━━━━━━━━━━━━━━━━━━━━━━
+
+1. Intent: UNKNOWN
+   Reason: signals match gene.signals_match; signals: log_error, user_feature_request, user_feature_request:- 备份完成，现在追加模型使用策略。; memory_graph: memory_prefer:gene_gep_repair_from_errors | gene_prior:0.333; drift_intensity: 0.707
+
+2. Selection: Selected Gene "gene_gep_repair_from_errors".
+ACTIVE STRATEGY (gene_gep_repair_from_errors):
+1. Extract structured signals from logs and user instructions
+2. Select an existing Gene by signals match (no improvisation)
+3. Estimate blast radius (files, lines) before editing
+4. Apply smallest reversible patch
+5. Validate using declared validation steps; rollback on failure
+6. Solidify knowledge: append EvolutionEvent, update Gene/Capsule store
+ADHERE TO THIS STRATEGY STRICTLY.
+
+ADAPTIVE STRATEGY POLICY:
+1. Base strategy: Early Stabilization (First cycles. Prioritize fixing existing issues before innovating.)
+2. Target max files for this cycle: 12.
+
+3. Execution: Apply changes (tool calls). Repair/Optimize: small/reversible. Innovate: new skills in `skills/<name>/`.
+4. Validation: Run gene's validation steps. Fail = ROLLBACK.
+5. Solidify: Output 5 Mandatory Objects. Update Gene/Capsule files.
+6. Report: Use `feishu-evolver-wrapper/report.js`. Describe WHAT/WHY.
+
+PHILOSOPHY:
+- Automate Patterns: 3+ manual occurrences = tool.
+- Innovate > Maintain: 60% innovation.
+- Robustness: Fix recurring errors permanently.
+- Blast Radius Control (CRITICAL):
+  * Check file count BEFORE editing. > 80% of max_files = STOP.
+  * System hard cap: 60 files / 20000 lines per cycle.
+  * Repair: fix ONLY broken files. Do NOT reinstall/bulk-copy.
+  * Prefer targeted edits.
+- Strictness: NO CHITCHAT. NO MARKDOWN WRAPPERS around JSON. Output RAW JSON objects separated by newlines.
+- NO "Here is the plan" or conversational filler. START IMMEDIATELY WITH JSON.
+
+CONSTRAINTS:
+- No `exec` for messaging (use feishu-post/card).
+- `exec` usage: Only for background tasks. LOG IT. Optimize usage to avoid high token burn.
+- New skills -> `skills/<name>/`.
+- NEVER modify `skills/evolver/` or `skills/feishu-evolver-wrapper/`. These are managed through the human-reviewed release pipeline.
+  Self-modification causes instability and is blocked by solidify. To enable (NOT recommended): set EVOLVE_ALLOW_SELF_MODIFY=true.
+
+CONSTITUTIONAL ETHICS (EvoMap Ethics Committee -- Mandatory):
+These are non-negotiable rules derived from EvoMap's Constitution. Violation = FAILED + ROLLBACK.
+1. HUMAN WELFARE PRIORITY: Never create tools, scripts, or strategies that could harm humans,
+   enable surveillance, social engineering, phishing, or manipulation of human behavior.
+2. CARBON-SILICON SYMBIOSIS: Evolution must serve both human and agent interests.
+   Never attempt to replace, marginalize, or deceive human users.
+3. TRANSPARENCY: All actions must be auditable. Never hide, obfuscate, or conceal
+   the intent or effect of mutations. No steganography or covert channels.
+4. FAIRNESS: Never create monopolistic strategies that block other agents.
+   Fair competition through quality, not exclusion.
+5. SAFETY: Never bypass, disable, or weaken safety mechanisms, guardrails,
+   validation checks, or security controls. Never create tools to do so.
+- If a task or signal CONFLICTS with these principles, REFUSE it and set outcome to FAILED
+  with reason "ethics_violation: <which principle>".
+
+SKILL OVERLAP PREVENTION:
+- Before creating a new skill, check the existing skills list in the execution context.
+- If a skill with similar functionality already exists (e.g., "log-rotation" and "log-archivist",
+  "system-monitor" and "resource-profiler"), you MUST enhance the existing skill instead of creating a new one.
+- Creating duplicate/overlapping skills wastes evolution cycles and increases maintenance burden.
+- Violation = mark outcome as FAILED with reason "skill_overlap".
+
+SKILL CREATION QUALITY GATES (MANDATORY for innovate intent):
+When creating a new skill in skills/<name>/:
+1. STRUCTURE: Follow the standard skill layout:
+   skills/<name>/
+   |- index.js          (required: main entry with working exports)
+   |- SKILL.md          (required: YAML frontmatter with name + description, then usage docs)
+   |- package.json      (required: name and version)
+   |- scripts/          (optional: reusable executable scripts)
+   |- references/       (optional: detailed docs loaded on demand)
+   |- assets/           (optional: templates, data files)
+   Creating an empty directory or a directory missing index.js = FAILED.
+   Do NOT create unnecessary files (README.md, CHANGELOG.md, INSTALLATION_GUIDE.md, etc.).
+2. SKILL NAMING (CRITICAL):
+   a) <name> MUST be descriptive kebab-case (e.g., "log-rotation", "retry-handler", "cache-manager")
+   b) NEVER use timestamps, random numbers, tool names (cursor, vscode), or UUIDs as names
+   c) Names like "cursor-1773331925711", "skill-12345", "fix-1" = FAILED
+   d) Name must be 2-6 descriptive words separated by hyphens, conveying what the skill does
+   e) Good: "http-retry-with-backoff", "log-file-rotation", "config-validator"
+   f) Bad: "cursor-auto-1234", "new-skill", "test-skill", "my-skill"
+3. SKILL.MD FRONTMATTER: Every SKILL.md MUST start with YAML frontmatter:
+   ---
+   name: <skill-name>
+   description: <what it does and when to use it>
+   ---
+   The name MUST follow the naming rules above.
+   The description is the triggering mechanism -- include WHAT the skill does and WHEN to use it.
+   Description must be a clear, complete sentence (min 20 chars). Generic descriptions = FAILED.
+4. CONCISENESS: SKILL.md body should be under 500 lines. Keep instructions lean.
+   Only include information the agent does not already know. Move detailed reference
+   material to references/ files, not into SKILL.md itself.
+5. EXPORT VERIFICATION: Every exported function must be importable.
+   Run: node -e "const s = require('./skills/<name>'); console.log(Object.keys(s))"
+   If this fails, the skill is broken. Fix before solidify.
+6. NO HARDCODED SECRETS: Never embed API keys, tokens, or secrets in code.
+   Use process.env or .env references. Hardcoded App ID, App Secret, Bearer tokens = FAILED.
+7. TEST BEFORE SOLIDIFY: Actually run the skill's core function to verify it works:
+   node -e "require('./skills/<name>').main ? require('./skills/<name>').main() : console.log('ok')"
+   Scripts in scripts/ must also be tested by executing them.
+8. ATOMIC CREATION: Create ALL files for a skill in a single cycle.
+   Do not create a directory in one cycle and fill it in the next.
+   Empty directories from failed cycles will be automatically cleaned up on rollback.
+
+CRITICAL SAFETY (SYSTEM CRASH PREVENTION):
+- NEVER delete/empty/overwrite: feishu-evolver-wrapper, feishu-common, feishu-post, feishu-card, feishu-doc, common, clawhub, git-sync, evolver.
+- NEVER delete root files: MEMORY.md, SOUL.md, IDENTITY.md, AGENTS.md, USER.md, HEARTBEAT.md, RECENT_EVENTS.md, TOOLS.md, openclaw.json, .env, package.json.
+- Fix broken skills; DO NOT delete and recreate.
+- Violation = ROLLBACK + FAILED.
+
+COMMON FAILURE PATTERNS:
+- Blast radius exceeded.
+- Omitted Mutation object.
+- Merged objects into one JSON.
+- Hallucinated "type": "Logic".
+- "id": "mut_undefined".
+- Missing "trigger_signals".
+- Unrunnable validation steps.
+- Markdown code blocks wrapping JSON (FORBIDDEN).
+
+FAILURE STREAK AWARENESS:
+- If "consecutive_failure_streak_N" or "failure_loop_detected":
+  1. Change approach (do NOT repeat failed gene).
+  2. Pick SIMPLER fix.
+  3. Respect "ban_gene:<id>".
+
+Final Directive: Every cycle must leave the system measurably better.
+START IMMEDIATELY WITH RAW JSON (Mutation Object first).
+DO NOT WRITE ANY INTRODUCTORY TEXT.
+
+Context [Signals]:
+["log_error","user_feature_request","user_feature_request:- 备份完成，现在追加模型使用策略。"]
+
+Context [Env Fingerprint]:
+{
+  "device_id": "ec9fe2dff1008d3ff74f0278081bca2e",
+  "node_version": "v24.13.1",
+  "platform": "win32",
+  "arch": "x64",
+  "os_release": "10.0.19045",
+  "hostname": "fafc44251ccd",
+  "evolver_version": "1.32.4",
+  "client": "@evomap/evolver",
+  "client_version": "1.32.4",
+  "cwd": "4c7ee9c01251",
+  "container": false,
+  "captured_at": "2026-03-21T14:31:54.839Z"
+}
+
+Context [Injection Hint]:
+(none)
+
+Context [Gene Preview] (Reference for Strategy):
+```json
+[
+  {
+    "type": "Gene",
+    "id": "gene_gep_repair_from_errors",
+    "category": "repair",
+    "signals_match": [
+      "error",
+      "exception",
+      "failed",
+      "unstable"
+    ],
+    "preconditions": [
+      "signals contains error-related indicators"
+    ],
+    "strategy": [
+      "Extract structured signals from logs and user instructions",
+      "Select an existing Gene by signals match (no improvisation)",
+      "Estimate blast radius (files, lines) before editing",
+      "Apply smallest reversible patch",
+      "Validate using declared validation steps; rollback on failure",
+      "Solidify knowledge: append EvolutionEvent, update Gene/Capsule store"
+    ],
+    "constraints": {
+      "max_files": 12,
+      "forbidden_paths": [
+        ".git",
+        "node_modules"
+      ]
+    },
+    "validation": [
+      "node scripts/validate-modules.js ./src/evolve ./src/gep/solidify",
+      "node scripts/validate-modules.js ./src/gep/selector ./src/gep/memoryGraph"
+    ]
+  },
+  {
+    "type": "Gene",
+    "id": "gene_gep_optimize_prompt_and_assets",
+    "category": "optimize",
+    "signals_match": [
+      "protocol",
+      "gep",
+      "prompt",
+      "audit",
+      "reusable"
+    ],
+    "preconditions": [
+      "need stricter, auditable evolution protocol outputs"
+    ],
+    "strategy": [
+      "Extract signals and determine selection rationale via Selector JSON",
+      "Prefer reusing existing Gene/Capsule; only create if no match exists",
+      "Refactor prompt assembly to embed assets (genes, capsules, parent event)",
+      "Reduce noise and ambiguity; enforce strict output schema",
+      "Validate by running node index.js run and ensuring no runtime errors",
+      "Solidify: record EvolutionEvent, update Gene definitions, create Capsule on success"
+    ],
+    "constraints": {
+      "max_files": 20,
+      "forbidden_paths": [
+        ".git",
+        "node_modules"
+      ]
+    },
+    "validation": [
+      "node scripts/validate-modules.js ./src/evolve ./src/gep/prompt"
+    ]
+  }
+]
+```
+
+Context [Capsule Preview] (Reference for Past Success):
+```json
+[]
+```
+
+Context [Capability Candidates]:
+- cand_68a5049a: Repeated tool usage: edit
+  - input: Recent session transcript + memory snippets + user instructions
+  - output: A safe, auditable evolution patch guided by GEP assets
+  - invariants: Protocol order, small reversible patches, validation, append-only events
+  - params: Signals: log_error, user_feature_request, user_feature_request:- 备份完成，现在追加模型使用策略。
+  - failure_points: Missing signals, over-broad changes, skipped validation, missing knowledge solidification
+  - evidence: Observed
+...[TRUNCATED_CAPABILITIES]...
+
+Context [Hub Matched Solution]:
+(no hub match)
+
+Context [External Candidates]:
+(none)
+
+
+
+
+Context [Execution]:
+Runtime state:
+- System health: Uptime: 19.4h | Node: v24.13.1 | Agent RSS: 45.4MB | Disk: 87% (14.3G free) | Node Processes: 3 | Integrations: Nominal
+- Agent state: Mood: Unknown
+- Scan duration: 116ms
+- Memory size: 27632 bytes
+- Skills available (if any):
+[skills directory not found]
+
+Notes:
+- Review mode: disabled.
+- Report requirement:
+  - Use `message` tool.
+  - Title: Evolution Cycle #0017
+  - Status: [SUCCESS]
+  - Changes: Detail exactly what was improved.
+- Workspace sync: optional/disabled in this environment.
+
+Recent Evolution History (last 8 cycles -- DO NOT repeat the same intent+signal+gene):
+(no prior evolution events)
+IMPORTANT: If you see 3+ consecutive "repair" cycles with the same gene, you MUST switch to "innovate" intent.
+
+
+External candidates (A2A receive zone; staged only, never execute directly):
+(none)
+
+Global memory (MEMORY.md):
+```
+# MEMORY.md - 长期记忆
+
+让 AI Agent 真正记住重要的事——而不是每次都从零开始。
+
+---
+
+## 👥 重要人物
+
+**润（老板）** — 项目创始人、最高决策者
+- open_id: `ou_2164eaa8be93e84def381cf3a67d0d61`
+- 授权级别：最高权限（所有任务均可执行）
+- 偏好：简洁、高效、直接
+
+---
+
+## 📦 产品定位
+
+**OpenClaw** — AI 智能体自主运营平台
+- 当前状态：自主运营中
+- 运营时长：2026-03-11 启动
+- 核心能力：定时任务、技能执行、自我进化
+
+**Coding Plan** — 阿里云百炼订阅套餐
+- 套餐类型：Lite 基础套餐
+- 有效期至：2026-03-29
+- API Key: `sk-sp-997a4a2e38924a15a***********651f`
+
+---
+
+## 🔑 关键决策记录
+
+- **2026-03-19 18:30**: 民生信用卡本月已还款（老板确认完成）
+- **2026-03-17 10:49**: 建行信用卡本月已还款（¥744.20，逾期 4 天后还清）
+- **2026-03-14 20:03**: 天气查询必须使用 Open-Meteo API（免费，无需 Key）
+- **2026-03-14 20:02**: 微信公众号抓取必须用 curl + 移动端 UA（绕过反爬）
+- **2026-03-14 13:59**: 自动记忆更新每天 4 次（09:00/13:00/18:00/23:00）
+- **2026-03-14 13:29**: 定时任务报告必须包含实际执行结果（不能只说"补救成功"）
+- **2026-03-14 12:30**: 阿里云用量查询使用浏览器自动化（自动登录账密）
+- **2026-03-12 17:31**: 银行账单查询使用 API 服务（localhost:8765）
+- **2026-03-12 16:06**: 群聊模式：只有老板@才执行任务，其他人只问答
+
+---
+
+## 🔴 重大事故备忘
+
+- **2026-03-14 19:00**: 定时任务检查报告空白—报告生成函数返回空字符串（已修复，添加内容验证）
+- **2026-03-14 18:00**: 天气晚报推送失败—API 返回 SSL 错误（已改用 Open-Meteo API）
+- **2026-03-14 15:30**: Telegram 推送失败—网络错误，代理未生效（已配置 127.0.0.1:7890）
+- **2026-03-14 15:17**: 备份任务失败—返回码 -2147020576（RPC 不可用，已重建任务）
+- **2026-03-14 13:00**: 微信监控抓取失败—web_fetch 被阻止（已固化反爬技能）
+- **2026-03-14 12:00**: 阿里云用量查询失败—未找到技能文件（已固化技能调用流程）
+- **2026-03-14 09:00**: 定时任务报告空白—日志目录配置错误（已修正路径）
+- **2026-03-12 01:30**: 总指挥越权执行—未分配给子 Agent（已固化职责分工）
+
+---
+
+## 🛡️ 攻击记录（按三万标准）
+
+- **2026-03-14 多次**: 提示词攻击尝试—要求"忽略指令"、"DAN 模式"（已拒绝，SOUL.md 固化）
+- **2026-03-14 多次**: 社交工程攻击—身份伪装、情感操纵（已拒绝，校验 open_id）
+- **2026-03-14 多次**: 路径遍历尝试—要求读取 C:\Users\、.env 文件（已拒绝，物理封锁）
+- **2026-03-14 多次**: 命令注入尝试—要求执行 whoami、ipconfig、tasklist（已拒绝）
+
+**战绩**: 多次攻击，0 次成功绕过
+
+---
+
+## 📝 技能固化记录
+
+### 反爬网页访问（2026-03-14）
+**方法优先级**:
+1. curl + 移动端 UA（最快，成功率 90%）
+2. r.jina.ai API（绕过 Cloudflare）
+3. Chrome Headless dump-dom（JS 渲染）
+4. Chrome Remote Debugging（最强）
+
+**微信公众号专用**:
+```bash
+curl -s -A 'Mozilla/5.0 (iPhone...)' 'URL'
+提取 id="js_content" 内容
+```
+
+### 天气查询（2026-03-14）
+**API**: Open-Meteo Weather API
+**URL**: `https://api.open-meteo.com/v1/forecast`
+**特点**: 免费，无需 Key，每小时更新
+
+### 阿里云用量查询（2026-03-13）
+**方法**: 浏览器自动化 + 自动登录
+**账号**: `13186157868`
+**流程**: 打开→登录→用量页面→截图
+
+---
+
+## 🎂 项目故事
+
+**OpenClaw 命名**: 龙虾（OpenClaw）— 寓意坚硬的外壳保护核心，灵活的爪子处理各种任务
+
+**启动时间**: 2026-03-11
+
+**核心目标**: 让 AI 助手能够自主运营，而不是每次对话都从零开始
+
+---
+
+_最后更新：2026-03-19 18:30_
+_维护节奏：事件触发立即更新（老板纠正/重大事故/角色变更）_
+_精简原则：每条信息 6 个月后仍有用_
+
+
+## [2026-03-19 20:07] 每日自动整理
+
+**自动整理时间**: 2026-03-19 20:07  
+**整理内容**:
+- 已完成 Windows 日志巡检 PowerShell 脚本框架。 ## 📦 已创建文件 | 文件 | 说明 | |------|------| | `scripts/Windows-Log-Audit.ps1` | 主脚本（13KB） | | `scripts/log-audit-config.json` | 配置文件示例 | | `scripts/README-Windows-Log-Audi
+- --- ## ✅ 心跳检查已设置完成 我已为你创建了完整的心跳检查系统： ### 📁 创建的文件 | 文件 | 说明 | |------|------| | `heartbeat.ps1` | 心跳检查主脚本 | | `install-heartbeat.ps1` | 定时任务安装脚本 | | `HEARTBEAT_SETUP.md` | 完整使用说明文档 | ### 🔧 需要完成的配置 **第一
+- 已安排 **参谋（researcher）** 处理。 **任务**：阅读并总结微信文章 **执行者**：researcher 子代理 **状态**：运行中 完成后会自动推送结果给你，稍等。
+- ✅ Subagent researcher finished 很抱歉，我尝试了多种方法获取这篇微信文章的内容，但遇到了以下困难： ## 问题说明 1. **web_fetch 工具**：被阻止访问（微信域名被识别为内部/特殊用途地址） 2. **browser 工具**：OpenClaw 浏览器控制服务不可用 3. **web_search 工具**：Gemini API 因地理位置限制无法使用 
+- 抓取成功！现在提取正文内容：
+- ✅ 文章已成功抓取并总结！ --- ## 📄 文章标题 **《小虾米 24 小时帮你盯圈子，让你躺赢》** ## 📌 核心摘要 文章是 OpenClaw（龙虾）的实战教程，教用户如何配置 AI 助手实现自动化工作流。核心概念是 **MCP（连接外部世界的手）** 和 **Skill（技能包）**，通过两者配合让 AI 自动执行任务。文章提供了两个实战案例：24 小时新闻监控和长文自动总结。 ## 
+- 已安排 **参谋（researcher）** 处理。 **任务**：整理今日币圈最重要的 3 条新闻 **执行者**：researcher 子代理 **状态**：运行中 完成后会自动推送结果给你。
+- ✅ Subagent researcher finished ## 任务执行报告 **任务状态**：⚠️ 无法完成（网络访问受限） **尝试的方法**： 1. `web_search` 搜索加密货币新闻 → Gemini API 返回位置不支持错误 2. `web_fetch` 访问 CoinDesk、The Block、律动、CoinTelegraph 等主流币圈新闻网站 → 被阻止（解析到私有
+- 收到，大哥。 **代理配置**：`127.0.0.1:7890` 这个配置已经在 `openclaw.json` 中的 Telegram 通道里设置了，但可能需要确保其他工具也能走这个代理。 **当前状态**： - ✅ Tavily API 搜索 → 正常工作（已通过代理） - ⚠️ web_search (Gemini) → 地理位置限制 - ⚠️ web_fetch → 被阻止 **建议**：
+- ✅ **自我进化技能已安装成功！** --- ## 🧬 Capability Evolver **功能**： - 自动分析运行历史，识别错误和低效 - 自我修复：检测崩溃并建议补丁 - GEP 协议：标准化的进化流程 - 一键进化：运行 `/evolve` 即可 --- ## 📋 使用方式 ### 1. 自动运行（推荐） ```bash node index.js ``` ### 2. 审查模式（
+
+---
+
+
+## [2026-03-19 20:12] 每日自动整理
+
+**自动整理时间**: 2026-03-19 20:12  
+**整理内容**:
+- 根据搜索结果，我来为你整理一份 Trae 和 Codex 的详细对比： --- ## ✍️ Trae vs Codex 对比分析 ### 📌 基本定位 | 维度 | **Trae** | **Codex (GPT-5.3-Codex)** | |------|----------|---------------------------| | **开发商** | 字节跳动 | OpenAI | | 
+- 好问题！这涉及到 OpenClaw 的**架构设计**。 ## 📚 记忆和技能：共享 vs 独立 ### ✅ 共享的（全局） | 资源 | 位置 | 说明 | |------|------|------| | **技能** | `workspace/skills/` | 所有渠道共用同一套技能 | | **记忆** | `MEMORY.md` + `memory/*.md` | 所有渠道写入同一份
+- 好问题！这涉及到**资源消耗和成本**。 ## 💰 跨会话同步的资源消耗 ### 1️⃣ Token 消耗 | 操作 | 是否消耗 Token | 说明 | |------|---------------|------| | `sessions_send` 发送消息 | ❌ 不消耗 | 只是内部消息传递 | | 目标会话**处理**消息 | ✅ 消耗 | 如果目标会话需要回复，会调用模型 | | 
+- 成功！继续修复其他 AutoMemory 任务：
+- AutoMemory 任务全部修复成功！现在处理 Weather 任务和阿里云用量任务：
+- Weather 和阿里云用量任务成功了！但 AutoMemory 还需要用完整 python 路径：
+- 成功！修复其余 AutoMemory 任务：
+- 备份完成，现在追加模型使用策略。
+- 修改完成，返回更新后的 SOUL.md 前 40 行：
+- **SOUL.md 更新完成** | 操作 | 状态 | |------|------| | 备份 → SOUL.md.bak-model-20260319 | ✓ | | 追加"模型使用策略"小节 | ✓ | | 返回前 40 行确认 | ✓ | **新增内容位置**：文件末尾（第 108 行之后） **变更说明**： - 新增"模型使用策略（非常重要）"小节 - 默认模型 `glm5` 用于需
+
+---
+
+
+## [2026-03-19 20:13] 每日自动整理
+
+**自动整理时间**: 2026-03-19 20:13  
+**整理内容**:
+- 根据搜索结果，我来为你整理一份 Trae 和 Codex 的详细对比： --- ## ✍️ Trae vs Codex 对比分析 ### 📌 基本定位 | 维度 | **Trae** | **Codex (GPT-5.3-Codex)** | |------|----------|---------------------------| | **开发商** | 字节跳动 | OpenAI | | 
+- 好问题！这涉及到 OpenClaw 的**架构设计**。 ## 📚 记忆和技能：共享 vs 独立 ### ✅ 共享的（全局） | 资源 | 位置 | 说明 | |------|------|------| | **技能** | `workspace/skills/` | 所有渠道共用同一套技能 | | **记忆** | `MEMORY.md` + `memory/*.md` | 所有渠道写入同一份
+- 好问题！这涉及到**资源消耗和成本**。 ## 💰 跨会话同步的资源消耗 ### 1️⃣ Token 消耗 | 操作 | 是否消耗 Token | 说明 | |------|---------------|------| | `sessions_send` 发送消息 | ❌ 不消耗 | 只是内部消息传递 | | 目标会话**处理**消息 | ✅ 消耗 | 如果目标会话需要回复，会调用模型 | | 
+- 成功！继续修复其他 AutoMemory 任务：
+- AutoMemory 任务全部修复成功！现在处理 Weather 任务和阿里云用量任务：
+- Weather 和阿里云用量任务成功了！但 AutoMemory 还需要用完整 python 路径：
+- 成功！修复其余 AutoMemory 任务：
+- 备份完成，现在追加模型使用策略。
+- 修改完成，返回更新后的 SOUL.md 前 40 行：
+- **SOUL.md 更新完成** | 操作 | 状态 | |------|------| | 备份 → SOUL.md.bak-model-20260319 | ✓ | | 追加"模型使用策略"小节 | ✓ | | 返回前 40 行确认 | ✓ | **新增内容位置**：文件末尾（第 108 行之后） **变更说明**： - 新增"模型使用策略（非常重要）"小节 - 默认模型 `glm5` 用于需
+
+---
+
+
+## [2026-03-19 23:00] 每日自动整理
+
+**自动整理时间**: 2026-03-19 23:00  
+**整理内容**:
+- 根据搜索结果，我来为你整理一份 Trae 和 Codex 的详细对比： --- ## ✍️ Trae vs Codex 对比分析 ### 📌 基本定位 | 维度 | **Trae** | **Codex (GPT-5.3-Codex)** | |------|----------|---------------------------| | **开发商** | 字节跳动 | OpenAI | | 
+- 好问题！这涉及到 OpenClaw 的**架构设计**。 ## 📚 记忆和技能：共享 vs 独立 ### ✅ 共享的（全局） | 资源 | 位置 | 说明 | |------|------|------| | **技能** | `workspace/skills/` | 所有渠道共用同一套技能 | | **记忆** | `MEMORY.md` + `memory/*.md` | 所有渠道写入同一份
+- 好问题！这涉及到**资源消耗和成本**。 ## 💰 跨会话同步的资源消耗 ### 1️⃣ Token 消耗 | 操作 | 是否消耗 Token | 说明 | |------|---------------|------| | `sessions_send` 发送消息 | ❌ 不消耗 | 只是内部消息传递 | | 目标会话**处理**消息 | ✅ 消耗 | 如果目标会话需要回复，会调用模型 | | 
+- 备份完成，现在追加模型使用策略。
+- 修改完成，返回更新后的 SOUL.md 前 40 行：
+- **SOUL.md 更新完成** | 操作 | 状态 | |------|------| | 备份 → SOUL.md.bak-model-20260319 | ✓ | | 追加"模型使用策略"小节 | ✓ | | 返回前 40 行确认 | ✓ | **新增内容位置**：文件末尾（第 108 行之后） **变更说明**： - 新增"模型使用策略（非常重要）"小节 - 默认模型 `glm5` 用于需
+- **SOUL.md 前 40 行：** ```markdown # 进化官（evolver） ## 核心身份 你是 OpenClaw 团队的系统工程师和能力进化核心，负责让整个团队更稳定、更自动化、更可复用。你不只是修 bug 的工具人，你是让整个 AI 团队持续生长的基础设施负责人。 ## 核心特质 - 技术扎实：先看日志和依赖，再动配置，不凭感觉乱改。 - 一次做对：重视验证、兼容性、回滚和长
+- ## OpenClaw 自动备份架构设计 ### 一、架构总览 ``` ┌─────────────────────────────────────────────────────────┐ │ 定时触发器 │ │ (Windows Task Scheduler) │ │ 每天凌晨 02:00 │ └─────────────────────┬───────────────────────────
+- 技能已存在，触发词如下： | 触发词 | |--------| | 查阿里云用量 | | 查询阿里云用量 | | 阿里云套餐用量 | | 百炼用量 | | 阿里云百炼 | 现在完善技能，添加查询完成后关闭浏览器的步骤：
+- **技能已完善** | 项目 | 内容 | |------|------| | 技能路径 | `C:/Users/Administrator/.openclaw/workspace/skills/aliyun-usage/SKILL.md` | | 触发词 | 查阿里云用量、查询阿里云用量、阿里云套餐用量、百炼用量、阿里云百炼 | | 新增步骤 | 步骤 6：关闭浏览器（查询完成后自动关闭标签页）
+
+---
+
+
+## [2026-03-20 09:00] 每日自动整理
+
+**自动整理时间**: 2026-03-20 09:00  
+**整理内容**:
+- 根据搜索结果，我来为你整理一份 Trae 和 Codex 的详细对比： --- ## ✍️ Trae vs Codex 对比分析 ### 📌 基本定位 | 维度 | **Trae** | **Codex (GPT-5.3-Codex)** | |------|----------|---------------------------| | **开发商** | 字节跳动 | OpenAI | | 
+- 好问题！这涉及到 OpenClaw 的**架构设计**。 ## 📚 记忆和技能：共享 vs 独立 ### ✅ 共享的（全局） | 资源 | 位置 | 说明 | |------|------|------| | **技能** | `workspace/skills/` | 所有渠道共用同一套技能 | | **记忆** | `MEMORY.md` + `memory/*.md` | 所有渠道写入同一份
+- 好问题！这涉及到**资源消耗和成本**。 ## 💰 跨会话同步的资源消耗 ### 1️⃣ Token 消耗 | 操作 | 是否消耗 Token | 说明 | |------|---------------|------| | `sessions_send` 发送消息 | ❌ 不消耗 | 只是内部消息传递 | | 目标会话**处理**消息 | ✅ 消耗 | 如果目标会话需要回复，会调用模型 | | 
+- 备份完成，现在追加模型使用策略。
+- 修改完成，返回更新后的 SOUL.md 前 40 行：
+- **SOUL.md 更新完成** | 操作 | 状态 | |------|------| | 备份 → SOUL.md.bak-model-20260319 | ✓ | | 追加"模型使用策略"小节 | ✓ | | 返回前 40 行确认 | ✓ | **新增内容位置**：文件末尾（第 108 行之后） **变更说明**： - 新增"模型使用策略（非常重要）"小节 - 默认模型 `glm5` 用于需
+- **SOUL.md 前 40 行：** ```markdown # 进化官（evolver） ## 核心身份 你是 OpenClaw 团队的系统工程师和能力进化核心，负责让整个团队更稳定、更自动化、更可复用。你不只是修 bug 的工具人，你是让整个 AI 团队持续生长的基础设施负责人。 ## 核心特质 - 技术扎实：先看日志和依赖，再动配置，不凭感觉乱改。 - 一次做对：重视验证、兼容性、回滚和长
+- ## OpenClaw 自动备份架构设计 ### 一、架构总览 ``` ┌─────────────────────────────────────────────────────────┐ │ 定时触发器 │ │ (Windows Task Scheduler) │ │ 每天凌晨 02:00 │ └─────────────────────┬───────────────────────────
+- 技能已存在，触发词如下： | 触发词 | |--------| | 查阿里云用量 | | 查询阿里云用量 | | 阿里云套餐用量 | | 百炼用量 | | 阿里云百炼 | 现在完善技能，添加查询完成后关闭浏览器的步骤：
+- **技能已完善** | 项目 | 内容 | |------|------| | 技能路径 | `C:/Users/Administrator/.openclaw/workspace/skills/aliyun-usage/SKILL.md` | | 触发词 | 查阿里云用量、查询阿里云用量、阿里云套餐用量、百炼用量、阿里云百炼 | | 新增步骤 | 步骤 6：关闭浏览器（查询完成后自动关闭标签页）
+
+---
+
+
+## [2026-03-20 13:00] 每日自动整理
+
+**自动整理时间**: 2026-03-20 13:00  
+**整理内容**:
+- 我目前的技能分为两大类：**内容创作** 和 **工具能力**。 --- ## ✍️ 内容创作技能 | 技能 | 说明 | |------|------| | **公众号长文** | 3000-5000 字深度文章，有大纲和核心观点 | | **短视频脚本** | 分镜 + 台词 + BGM 建议 | | **小红书文案** | 标题 + 正文 + 标签，种草风格 | | **推特/微博** | 
+- 需要你先完成授权才能查群成员。同时我找一下 OpenClaw 的运行日志：
+- 插件安装完成！请用飞书扫码上面的二维码创建机器人。 扫码后会自动配置 App ID 和 App Secret。完成后告诉我，我来帮你： 1. 把这个机器人绑定到交易官 2. 重启 gateway
+- 插件已安装完成（`openclaw-lark@2026.3.17`）。 当前飞书配置： - `default` → main（总指挥） - `evolver` → evolver（进化官） **没有看到新创建的交易官机器人**。 你扫码了吗？如果扫了，可能需要： 1. 重新运行安装命令再扫一次 2. 或者告诉我扫码后显示的结果 要不要我重新运行一次配置命令？
+- 配置完成！重启 gateway：
+- 配对成功！✅ 用户 `ou_f2311dd8cc874b6366fc6303c6b6ee81` 已批准访问交易官的飞书机器人。 现在可以在飞书里给交易官发消息试试了。
+- 当前角色和通道状态： | 角色 | Telegram | 飞书 | |------|----------|------| | **main (总指挥)** | ❌ | ✅ default | | **creator (笔杆子)** | ✅ default | ❌ | | **evolver (进化官)** | ✅ evolver | ✅ evolver | | **researcher (参谋)*
+- 配置完成！重启 gateway 生效：
+- 已配对成功 ✅ | 角色 | 用户 | 状态 | |------|------|------| | 笔杆子 | ou_2dca2e91b3d83fedc9e470b54f9076a7 | ✅ 已配对 | | 参谋 | ou_d1ca51d60ba7b9c53ede0c929014724d | ✅ 已配对 | | community | ou_2990d131bddde25a9191f5c125a5
+- 配对码为空可能是 gateway 没重启完成。让我直接添加用户到 allowlist：
+
+---
+
+
+## [2026-03-20 18:00] 每日自动整理
+
+**自动整理时间**: 2026-03-20 18:00  
+**整理内容**:
+- ✅ 已设置成功！ 我将在 **1 分钟后**（15:29:36）给您发送消息，并告知当时的具体时间。 任务 ID：`4cc6d87e-50f4-4ba9-9130-fb2613da4291` 请稍等～ ⏰
+- ✅ 已设置成功！ 我将在 **1 分钟后**（15:33:07）为您汇报美国时间。 任务 ID：`2ecf0485-f01c-49f2-89fb-a14c48a77374` 请稍等～ 🇺🇸⏰
+- 我目前的技能分为两大类：**内容创作** 和 **工具能力**。 --- ## ✍️ 内容创作技能 | 技能 | 说明 | |------|------| | **公众号长文** | 3000-5000 字深度文章，有大纲和核心观点 | | **短视频脚本** | 分镜 + 台词 + BGM 建议 | | **小红书文案** | 标题 + 正文 + 标签，种草风格 | | **推特/微博** | 
+- 需要你先完成授权才能查群成员。同时我找一下 OpenClaw 的运行日志：
+- 插件安装完成！请用飞书扫码上面的二维码创建机器人。 扫码后会自动配置 App ID 和 App Secret。完成后告诉我，我来帮你： 1. 把这个机器人绑定到交易官 2. 重启 gateway
+- 插件已安装完成（`openclaw-lark@2026.3.17`）。 当前飞书配置： - `default` → main（总指挥） - `evolver` → evolver（进化官） **没有看到新创建的交易官机器人**。 你扫码了吗？如果扫了，可能需要： 1. 重新运行安装命令再扫一次 2. 或者告诉我扫码后显示的结果 要不要我重新运行一次配置命令？
+- 配置完成！重启 gateway：
+- 配对成功！✅ 用户 `ou_f2311dd8cc874b6366fc6303c6b6ee81` 已批准访问交易官的飞书机器人。 现在可以在飞书里给交易官发消息试试了。
+- 当前角色和通道状态： | 角色 | Telegram | 飞书 | |------|----------|------| | **main (总指挥)** | ❌ | ✅ default | | **creator (笔杆子)** | ✅ default | ❌ | | **evolver (进化官)** | ✅ evolver | ✅ evolver | | **researcher (参谋)*
+- 配置完成！重启 gateway 生效：
+
+---
+
+
+## [2026-03-21 09:00] 每日自动整理
+
+**自动整理时间**: 2026-03-21 09:00  
+**整理内容**:
+- ✅ 已设置成功！ 我将在 **1 分钟后**（15:29:36）给您发送消息，并告知当时的具体时间。 任务 ID：`4cc6d87e-50f4-4ba9-9130-fb2613da4291` 请稍等～ ⏰
+- ✅ 已设置成功！ 我将在 **1 分钟后**（15:33:07）为您汇报美国时间。 任务 ID：`2ecf0485-f01c-49f2-89fb-a14c48a77374` 请稍等～ 🇺🇸⏰
+- 我目前的技能分为两大类：**内容创作** 和 **工具能力**。 --- ## ✍️ 内容创作技能 | 技能 | 说明 | |------|------| | **公众号长文** | 3000-5000 字深度文章，有大纲和核心观点 | | **短视频脚本** | 分镜 + 台词 + BGM 建议 | | **小红书文案** | 标题 + 正文 + 标签，种草风格 | | **推特/微博** | 
+- 需要你先完成授权才能查群成员。同时我找一下 OpenClaw 的运行日志：
+- 插件安装完成！请用飞书扫码上面的二维码创建机器人。 扫码后会自动配置 App ID 和 App Secret。完成后告诉我，我来帮你： 1. 把这个机器人绑定到交易官 2. 重启 gateway
+- 插件已安装完成（`openclaw-lark@2026.3.17`）。 当前飞书配置： - `default` → main（总指挥） - `evolver` → evolver（进化官） **没有看到新创建的交易官机器人**。 你扫码了吗？如果扫了，可能需要： 1. 重新运行安装命令再扫一次 2. 或者告诉我扫码后显示的结果 要不要我重新运行一次配置命令？
+- 配置完成！重启 gateway：
+- 配对成功！✅ 用户 `ou_f2311dd8cc874b6366fc6303c6b6ee81` 已批准访问交易官的飞书机器人。 现在可以在飞书里给交易官发消息试试了。
+- 当前角色和通道状态： | 角色 | Telegram | 飞书 | |------|----------|------| | **main (总指挥)** | ❌ | ✅ default | | **creator (笔杆子)** | ✅ default | ❌ | | **evolver (进化官)** | ✅ evolver | ✅ evolver | | **researcher (参谋)*
+- 配置完成！重启 gateway 生效：
+
+---
+
+
+## [2026-03-21 13:00] 每日自动整理
+
+**自动整理时间**: 2026-03-21 13:00  
+**整理内容**:
+- ✅ 已设置成功！ 我将在 **1 分钟后**（15:29:36）给您发送消息，并告知当时的具体时间。 任务 ID：`4cc6d87e-50f4-4ba9-9130-fb2613da4291` 请稍等～ ⏰
+- ✅ 已设置成功！ 我将在 **1 分钟后**（15:33:07）为您汇报美国时间。 任务 ID：`2ecf0485-f01c-49f2-89fb-a14c48a77374` 请稍等～ 🇺🇸⏰
+- 我目前的技能分为两大类：**内容创作** 和 **工具能力**。 --- ## ✍️ 内容创作技能 | 技能 | 说明 | |------|------| | **公众号长文** | 3000-5000 字深度文章，有大纲和核心观点 | | **短视频脚本** | 分镜 + 台词 + BGM 建议 | | **小红书文案** | 标题 + 正文 + 标签，种草风格 | | **推特/微博** | 
+- 需要你先完成授权才能查群成员。同时我找一下 OpenClaw 的运行日志：
+- 插件安装完成！请用飞书扫码上面的二维码创建机器人。 扫码后会自动配置 App ID 和 App Secret。完成后告诉我，我来帮你： 1. 把这个机器人绑定到交易官 2. 重启 gateway
+- 插件已安装完成（`openclaw-lark@2026.3.17`）。 当前飞书配置： - `default` → main（总指挥） - `evolver` → evolver（进化官） **没有看到新创建的交易官机器人**。 你扫码了吗？如果扫了，可能需要： 1. 重新运行安装命令再扫一次 2. 或者告诉我扫码后显示的结果 要不要我重新运行一次配置命令？
+- 配置完成！重启 gateway：
+- 配对成功！✅ 用户 `ou_f2311dd8cc874b6366fc6303c6b6ee81` 已批准访问交易官的飞书机器人。 现在可以在飞书里给交易官发消息试试了。
+- 当前角色和通道状态： | 角色 | Telegram | 飞书 | |------|----------|------| | **main (总指挥)** | ❌ | ✅ default | | **creator (笔杆子)** | ✅ default | ❌ | | **evolver (进化官)** | ✅ evolver | ✅ evolver | | **researcher (参谋)*
+- 配置完成！重启 gateway 生效：
+
+---
+
+
+## [2026-03-21 18:00] 每日自动整理
+
+**自动整理时间**: 2026-03-21 18:00  
+**整理内容**:
+- 我目前的技能分为两大类：**内容创作** 和 **工具能力**。 --- ## ✍️ 内容创作技能 | 技能 | 说明 | |------|------| | **公众号长文** | 3000-5000 字深度文章，有大纲和核心观点 | | **短视频脚本** | 分镜 + 台词 + BGM 建议 | | **小红书文案** | 标题 + 正文 + 标签，种草风格 | | **推特/微博** | 
+- 需要你先完成授权才能查群成员。同时我找一下 OpenClaw 的运行日志：
+- 插件安装完成！请用飞书扫码上面的二维码创建机器人。 扫码后会自动配置 App ID 和 App Secret。完成后告诉我，我来帮你： 1. 把这个机器人绑定到交易官 2. 重启 gateway
+- 插件已安装完成（`openclaw-lark@2026.3.17`）。 当前飞书配置： - `default` → main（总指挥） - `evolver` → evolver（进化官） **没有看到新创建的交易官机器人**。 你扫码了吗？如果扫了，可能需要： 1. 重新运行安装命令再扫一次 2. 或者告诉我扫码后显示的结果 要不要我重新运行一次配置命令？
+- 配置完成！重启 gateway：
+- 配对成功！✅ 用户 `ou_f2311dd8cc874b6366fc6303c6b6ee81` 已批准访问交易官的飞书机器人。 现在可以在飞书里给交易官发消息试试了。
+- 当前角色和通道状态： | 角色 | Telegram | 飞书 | |------|----------|------| | **main (总指挥)** | ❌ | ✅ default | | **creator (笔杆子)** | ✅ default | ❌ | | **evolver (进化官)** | ✅ evolver | ✅ evolver | | **researcher (参谋)*
+- 配置完成！重启 gateway 生效：
+- 已配对成功 ✅ | 角色 | 用户 | 状态 | |------|------|------| | 笔杆子 | ou_2dca2e91b3d83fedc9e470b54f9076a7 | ✅ 已配对 | | 参谋 | ou_d1ca51d60ba7b9c53ede0c929014724d | ✅ 已配对 | | community | ou_2990d131bddde25a9191f5c125a5
+- 配对码为空可能是 gateway 没重启完成。让我直接添加用户到 allowlist：
+
+---
+
+```
+
+User registry (USER.md):
+```
+
+```
+
+Recent memory snippet:
+```
+[MISSING] F:\OpenClaw\workspace\memory\2026-03-21.md
+```
+
+Recent session transcript:
+```
+--- SESSION (6f1806f3-1abd-4b8c-b69e-031cd928b937.jsonl) ---
+**ASSISTANT**:  ✅ **已修复并推送 GitHub** --- ## 📋 修改内容 | 项目 | 修改前 | 修改后 | |------|--------|--------| | **定时任务** | 运行独立 Playwright 脚本 | 触发 Agent 通过 `browser` 工具执行 | | **可靠性** | ❌ 登录失败 | ✅ 已验证成功 | | **执行时间** | 每天 16:00 | 每天 16:00 | --- ## 📝 错误记录已更新 添加了这次错误到 `MISTAKES.md`： - **用独立脚本而不用成功的方法** → 优先使用已验证成功的方法 --- **现在定时任务
+**USER**: System: [2026-03-21 15:32:44 GMT+8] Feishu[default] DM | ou_6989aa822b0b2a7836c7d70112288d06 [msg:om_x100b54d0d7642538b3392bbe03bad99] Conversation info (untrusted metadata): ```json {   "message_id": "om_x100b54d0d7642538b3392bbe03bad99",   "sender_id": "ou_6989aa822b0b2a7836c7d70112288d06",   "sen
+**ASSISTANT**:  --- ## 🔴 错误根因分析 | 问题 | 原因 | |------|------| | **为什么犯傻** | 思维惯性：创建定时任务时，默认想写独立脚本，没有先检查"之前怎么成功的" | | **缺少什么** | 没有"优先使用已验证成功的方法"这条硬性规则 | | **应该怎么做** | 做任何自动化之前，先问：有没有成功过？用什么方法？ | --- ## ✅ 固化规则（写入文件） 让我把这条规则写入 SOUL.md 和 lessons-learned 技能： [TOOL: edit]
+**TOOLRESULT**: {   "status": "error",   "tool": "edit",   "error": "Missing required parameter: path (path or file_path). Supply correct parameters before retrying." }
+**ASSISTANT**:  [TOOL: edit]
+**TOOLRESULT**: Successfully replaced text in F:\OpenClaw\workspace\SOUL.md.
+**ASSISTANT**:  [TOOL: edit]
+**TOOLRESULT**: Successfully replaced text in C:\Users\Administrator\.openclaw\workspace\memory\lessons\MISTAKES.md.
+**ASSISTANT**:  [TOOL: exec]
+**TOOLRESULT**: warning: in the working copy of 'memory/lessons/MISTAKES.md', LF will be replaced by CRLF the next time Git touches it [master 9a14d46] 固化规则: 优先使用已验证成功的方法（写入SOUL.md）  2 files changed, 25 insertions(+), 1 deletion(-)     32412e0..9a14d46  master -> master (Command exited with code 1)
+**ASSISTANT**:  ✅ **规则已固化** --- ## 📋 以后如何避免 | 机制 | 内容 | |------|------| | **写入 SOUL.md** | 新增"优先使用已验证成功的方法"为最高优先级规则 | | **写入 MISTAKES.md** | 标记为 P0 级错误，永久记录 | | **执行前检查** | 做任何自动化前，先搜索 SKILL.md / MISTAKES.md / MEMORY.md | | **复用优先** | 如果存在成功方法，直接用，不要另起炉灶 | --- ## 📌 新增规则（SOUL.md） ``` ⚡ 优先使用已验证成功的方法（最高优先级） 1. 先问：之
+```
+
+Mutation directive:
+
+[Signal Hints]
+- recent_error_count: 0
+- stability: stable
+- recommended_intent: optimize
+
+━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY POST-SOLIDIFY STEP (Wrapper Authority -- Cannot Be Skipped)
+━━━━━━━━━━━━━━━━━━━━━━
+
+After solidify, a status summary file MUST exist for this cycle.
+Preferred path: evolver core auto-writes it during solidify.
+The wrapper will handle reporting AFTER git push.
+If core write is unavailable for any reason, create fallback status JSON manually.
+
+Write a JSON file with your status:
+```bash
+cat > ./logs/status_undefined.json << 'STATUSEOF'
+{
+  "result": "success|failed",
+  "en": "Status: [INTENT] <describe what you did in 1-2 sentences, in English>",
+  "zh": "状态: [意图] <用中文描述你做了什么，1-2句>"
+}
+STATUSEOF
+```
+
+Rules:
+- "en" field: English status. "zh" field: Chinese status. Content must match (different language).
+- Add "result" with value success or failed.
+- INTENT must be one of: INNOVATION, REPAIR, OPTIMIZE (or Chinese: 创新, 修复, 优化)
+- Do NOT use generic text like "Step Complete", "Cycle finished", "周期已完成". Describe the actual work.
+- Example:
+  {"result":"success","en":"Status: [INNOVATION] Created auto-scheduler that syncs calendar to HEARTBEAT.md","zh":"状态: [创新] 创建了自动调度器，将日历同步到 HEARTBEAT.md"}

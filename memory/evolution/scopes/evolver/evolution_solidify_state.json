@@ -1,0 +1,107 @@
+{
+  "last_run": {
+    "run_id": "run_1774108896191",
+    "created_at": "2026-03-21T16:01:36.292Z",
+    "parent_event_id": null,
+    "selected_gene_id": "gene_gep_repair_from_errors",
+    "selected_capsule_id": null,
+    "selector": {
+      "selected": "gene_gep_repair_from_errors",
+      "reason": [
+        "signals match gene.signals_match",
+        "signals: log_error, user_feature_request, user_feature_request:- 备份完成，现在追加模型使用策略。",
+        "memory_graph: memory_prefer:gene_gep_repair_from_errors | gene_prior:0.250",
+        "drift_intensity: 0.707"
+      ],
+      "alternatives": []
+    },
+    "signals": [
+      "log_error",
+      "user_feature_request",
+      "user_feature_request:- 备份完成，现在追加模型使用策略。"
+    ],
+    "mutation": {
+      "type": "Mutation",
+      "id": "mut_1774108896187",
+      "category": "repair",
+      "trigger_signals": [
+        "log_error",
+        "user_feature_request",
+        "user_feature_request:- 备份完成，现在追加模型使用策略。"
+      ],
+      "target": "gene:gene_gep_repair_from_errors",
+      "expected_effect": "reduce runtime errors, increase stability, and lower failure rate",
+      "risk_level": "low"
+    },
+    "mutation_id": "mut_1774108896187",
+    "personality_state": {
+      "type": "PersonalityState",
+      "rigor": 0.7,
+      "creativity": 0.35,
+      "verbosity": 0.25,
+      "risk_tolerance": 0.4,
+      "obedience": 0.85
+    },
+    "personality_key": "rigor=0.7|creativity=0.3|verbosity=0.3|risk_tolerance=0.4|obedience=0.9",
+    "personality_known": false,
+    "personality_mutations": [],
+    "drift": false,
+    "selected_by": "memory_graph+selector",
+    "source_type": "generated",
+    "reused_asset_id": null,
+    "reused_source_node": null,
+    "reused_chain_id": null,
+    "baseline_untracked": [
+      "assets/gep/scopes/community/candidates.jsonl",
+      "assets/gep/scopes/community/events.jsonl",
+      "assets/gep/scopes/community/genes.jsonl",
+      "assets/gep/scopes/creator/candidates.jsonl",
+      "assets/gep/scopes/creator/events.jsonl",
+      "assets/gep/scopes/creator/genes.jsonl",
+      "assets/gep/scopes/dev/candidates.jsonl",
+      "assets/gep/scopes/dev/events.jsonl",
+      "assets/gep/scopes/dev/genes.jsonl",
+      "assets/gep/scopes/evolver/events.jsonl",
+      "assets/gep/scopes/evolver/genes.jsonl",
+      "assets/gep/scopes/main/candidates.jsonl",
+      "assets/gep/scopes/main/events.jsonl",
+      "assets/gep/scopes/main/genes.jsonl",
+      "assets/gep/scopes/operator/candidates.jsonl",
+      "assets/gep/scopes/operator/events.jsonl",
+      "assets/gep/scopes/operator/genes.jsonl",
+      "assets/gep/scopes/researcher/candidates.jsonl",
+      "assets/gep/scopes/researcher/events.jsonl",
+      "assets/gep/scopes/researcher/genes.jsonl",
+      "assets/gep/scopes/trader/candidates.jsonl",
+      "assets/gep/scopes/trader/events.jsonl",
+      "assets/gep/scopes/trader/genes.jsonl"
+    ],
+    "baseline_git_head": "d569108bfbfdb05d4d918ab3ea2344a8b1ac82f5",
+    "blast_radius_estimate": {
+      "files": 12,
+      "lines": 960
+    },
+    "strategy_policy": {
+      "name": "early-stabilize",
+      "label": "Early Stabilization",
+      "description": "First cycles. Prioritize fixing existing issues before innovating.",
+      "forceInnovate": false,
+      "cautiousExecution": false,
+      "highRiskGene": false,
+      "repairStreak": 0,
+      "failureStreak": 0,
+      "blastRadiusMaxFiles": 12,
+      "directives": [
+        "Base strategy: Early Stabilization (First cycles. Prioritize fixing existing issues before innovating.)",
+        "Target max files for this cycle: 12."
+      ]
+    },
+    "active_task_id": null,
+    "active_task_title": null,
+    "worker_assignment_id": null,
+    "worker_pending": false,
+    "commitment_deadline": null,
+    "applied_lessons": [],
+    "hub_lessons": []
+  }
+}

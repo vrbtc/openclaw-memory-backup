@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-03-14T19:55:20.832Z",
+  "assessment": {
+    "score": 53,
+    "dimensions": {
+      "任务执行": {
+        "score": 16,
+        "description": "成功率 16.0%"
+      },
+      "错误恢复": {
+        "score": 90,
+        "description": "1 个未解决错误"
+      }
+    },
+    "gaps": [
+      {
+        "type": "task_execution",
+        "severity": "high",
+        "description": "任务执行成功率低于 80%"
+      }
+    ],
+    "recommendations": [
+      "优化任务执行逻辑，添加错误处理"
+    ],
+    "level": "Basic"
+  },
+  "evolution_tasks": [
+    {
+      "id": "evol-1773518120831-0",
+      "type": "evolution",
+      "priority": "P1",
+      "title": "修复：任务执行成功率低于 80%",
+      "description": "任务执行成功率低于 80%",
+      "recommendations": [
+        "优化任务执行逻辑，添加错误处理"
+      ],
+      "created_at": "2026-03-14T19:55:20.831Z",
+      "status": "pending"
+    }
+  ],
+  "next_check": "2026-03-15T19:55:20.832Z"
+}
